@@ -1,16 +1,14 @@
-import { Component} from "react";
+
 import { Button,Row,Col   } from "react-bootstrap";
 
-class Category extends Component {
-
-  render() {
+const Category =(props)=>{
     return (
       <>
           <Row className="g-1 m-3" >
             <Col xs='auto'>
               <Button
                 variant="dark"
-                onClick={() => this.props.cat("Fantasy")}
+                onClick={() => props.cat("Fantasy")}
               >
                 Fantasy
               </Button>
@@ -18,7 +16,7 @@ class Category extends Component {
               <Col xs='auto'>
               <Button
                 variant="dark"
-                onClick={() => this.props.cat("History")}
+                onClick={() => props.cat("History")}
               >
                 History
               </Button>
@@ -26,7 +24,7 @@ class Category extends Component {
               <Col xs='auto'>
               <Button
                 variant="dark"
-                onClick={() => this.props.cat("Horror")}
+                onClick={() => props.cat("Horror")}
               >
                 Horror
               </Button>
@@ -34,7 +32,7 @@ class Category extends Component {
               <Col xs='auto'>
               <Button
                 variant="dark"
-                onClick={() => this.props.cat("Romance")}
+                onClick={() => props.cat("Romance")}
               >
                 Romance
               </Button>
@@ -42,7 +40,7 @@ class Category extends Component {
               <Col xs='auto'>
               <Button
                 variant="dark"
-                onClick={() => this.props.cat("Scifi")}
+                onClick={() => props.cat("Scifi")}
               >
                 Scifi
               </Button>
@@ -52,6 +50,6 @@ class Category extends Component {
       </>
     );
   }
-}
+
 
 export default Category;

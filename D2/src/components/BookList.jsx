@@ -1,7 +1,7 @@
 import { Container, Form, Col, Row, Button } from "react-bootstrap";
 import "./AllTheBooks.css";
 import SingleBook from "./SingleBook";
-import { Component } from "react";
+import { useEffect, useState } from "react";
 import Category from "./Category";
 import fantasy from "../data/fantasy.json";
 import history from "../data/history.json";
@@ -10,21 +10,21 @@ import romance from "../data/romance.json";
 import scifi from "../data/scifi.json";
 import CommentArea from "./CommentArea";
 
-class BookList extends Component {
-  state = {
-    searchInput: "",
+const BookList = () => {
+  const [selectedCategory, setSelectedCategory] = useState({
+    selectedCategory: "",
     books: [],
     displayedBooks: [],
-    selectedCategory: "",
-    showComment: false,
-    selected: "",
-  };
+    searchInput: "",
+  });
+  const [showComment, setShowComment] = useState(false);
+  const [selected, setSelected] = useState("");
 
-  componentDidMount() {
-    this.handleCategorySelect("Fantasy");
-  }
+  useEffect(() => {
+    handleCategorySelect("Fantasy");
+  }, []);
 
-  handleCategorySelect = (category) => {
+  const handleCategorySelect = (category) => {
     let books = [];
     switch (category) {
       case "Fantasy":
@@ -46,7 +46,7 @@ class BookList extends Component {
         books = fantasy;
     }
 
-    this.setState({
+    setSelectedCategory({
       selectedCategory: category,
       books: books,
       displayedBooks: books,
@@ -54,80 +54,80 @@ class BookList extends Component {
     });
   };
 
-  handleSearch = (e) => {
+  const handleSearch = (e) => {
     e.preventDefault();
-    const { searchInput, books } = this.state;
-    const filteredBooks = books.filter((book) =>
-      book.title.toLowerCase().includes(searchInput.toLowerCase())
+    const filteredBooks = selectedCategory.books.filter((book) =>
+      book.title
+        .toLowerCase()
+        .includes(selectedCategory.searchInput.toLowerCase())
     );
-    this.setState({ displayedBooks: filteredBooks });
+    setSelectedCategory({ ...selectedCategory, displayedBooks: filteredBooks });
   };
 
-  selected = (asin) => {
-    if (this.state.selected !== asin) {
-      this.setState({ selected: asin, showComment: true });
+  const selectedAsin = (asin) => {
+    if (selected !== asin) {
+      setSelected(asin);
+      setShowComment(true);
     } else {
-      this.setState({ selected: "", showComment: false });
+      setSelected("");
+      setShowComment(false);
     }
   };
 
   //asin === this.state.selected? null : asin  avrei potuto mettere questo
 
-  render() {
-    return (
-      <Container className="my-2">
-        <Row>
-          <Form onSubmit={this.handleSearch}>
-            <Row className="justify-content-center mb-3">
-              <Col xs={4}>
-                <Form.Control
-                  value={this.state.searchInput}
-                  onChange={(e) =>
-                    this.setState({ searchInput: e.target.value })
-                  }
-                  type="text"
-                  placeholder="Search"
+  return (
+    <Container className="my-2">
+      <Row>
+        <Form onSubmit={handleSearch}>
+          <Row className="justify-content-center mb-3">
+            <Col xs={4}>
+              <Form.Control
+                value={selectedCategory.searchInput}
+                onChange={(e) =>
+                  setSelectedCategory({
+                    ...selectedCategory,
+                    searchInput: e.target.value,
+                  })
+                }
+                type="text"
+                placeholder="Search"
+              />
+            </Col>
+            <Col xs="auto">
+              <Button variant="dark" type="submit">
+                <i className="bi bi-search p-0"></i>
+              </Button>
+            </Col>
+          </Row>
+        </Form>
+      </Row>
+
+      <Category cat={handleCategorySelect} />
+
+      <Row>
+        <Col>
+          <Row xs={2} md={3} lg={4} xl={5}>
+            {selectedCategory.displayedBooks.map((book) => (
+              <Col key={book.asin}>
+                <SingleBook
+                  book={book}
+                  selected={selectedAsin}
+                  isSelected={selected === book.asin}
                 />
               </Col>
-              <Col xs="auto">
-                <Button variant="dark" type="submit">
-                  <i className="bi bi-search p-0"></i>
-                </Button>
-              </Col>
-            </Row>
-          </Form>
-        </Row>
-
-        <Category cat={this.handleCategorySelect} />
-
-        <Row>
-          <Col>
-            <Row xs={2} md={3} lg={4} xl={5}>
-              {this.state.displayedBooks.map((book) => (
-                <Col key={book.asin}>
-                  <SingleBook
-                    book={book}
-                    selected={this.selected}
-                    isSelected={this.state.selected === book.asin}
-                  />
-                </Col>
-              ))}
-            </Row>
+            ))}
+          </Row>
+        </Col>
+        {showComment && (
+          <Col xs={12} md={2} className="container-fluid p-0 sticky-col">
+            <h2 className="text-center">Comment Section</h2>
+            <CommentArea asin={selected} />
           </Col>
-          {this.state.showComment && (
-            <Col
-              xs={12}
-              md={2}
-              className="container-fluid p-0 sticky-col"
-            >
-              <h2 className="text-center">Comment Section</h2>
-              <CommentArea asin={this.state.selected} />
-            </Col>
-          )}
-        </Row>
-      </Container>
-    );
-  }
-}
+        )}
+      </Row>
+    </Container>
+  );
+};
 
 export default BookList;
