@@ -1,5 +1,5 @@
 import { Button, Form } from "react-bootstrap";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const AddComment = function (props) {
   const [comment, setComment] = useState({
@@ -10,7 +10,7 @@ const AddComment = function (props) {
 
   const sendComment = async (e) => {
     e.preventDefault();
-    //console.log(comment);
+    console.log(comment);
     try {
       let response = await fetch(
         "https://striveschool-api.herokuapp.com/api/comments",
@@ -38,6 +38,13 @@ const AddComment = function (props) {
       alert(error);
     }
   };
+
+  useEffect(()=>{
+    setComment({
+      ...comment,
+      elementId:props.asin
+    })
+  }, [props.asin])
 
   return (
     <div className="my-3">
