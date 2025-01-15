@@ -1,17 +1,15 @@
-import { Component } from "react";
+import { useEffect, useState } from "react";
 import { Carousel, Row, Col, Card, Container } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
-class MovieCards extends Component {
-  state = {
-    index: 0,
-    activeSlides: [],
-    movies: [],
-  };
+const MovieCards = (props) => {
+  const [index, setIndex] = useState();
+  const [activeSlides, setaAtiveSlides] = useState([]);
+  const navigate = useNavigate();
 
-  URL = "https://www.omdbapi.com/?i=tt3896198&apikey=4af2327&s=?";
+  const URL = "https://www.omdbapi.com/?i=tt3896198&apikey=4af2327&s=?";
 
-
-  createSlides = (cards) => {
+  const createSlides = (cards) => {
     const slides = [];
     for (let i = 0; i < cards.length - 6 + 1; i++) {
       slides.push(cards.slice(i, i + 6));
@@ -19,18 +17,14 @@ class MovieCards extends Component {
     return slides;
   };
 
-
-  getMovies = async (query) => {
+  const getMovies = async () => {
     try {
-      const response = await fetch(this.URL + query);
+      const response = await fetch(URL + props.query);
       if (response.ok) {
         const data = await response.json();
-        const movies = data.Search;
-       //console.log(data.Search);
-        this.setState({
-            movies,
-            activeSlides: this.createSlides(movies),
-        });
+        //console.log(data.Search);
+        setaAtiveSlides(createSlides(data.Search));
+        
       } else {
         throw new Error("errore nel recupero dei dati");
       }
@@ -39,56 +33,55 @@ class MovieCards extends Component {
     }
   };
 
-  componentDidMount() {
-    this.getMovies(this.props.query);
-    //console.log('nuovo')
-  }
-
-
-
-  handleSelect = (selectedIndex) => {
-    this.setState({
-      index: selectedIndex,
-    });
+  const handleSelect = (selectedIndex) => {
+    setIndex(selectedIndex);
   };
 
-  render() {
-    return (
-      <Container className="px-5 mb-4" fluid>
-        <h4>{this.props.title}</h4>
-        <Carousel
-          activeIndex={this.state.index}
-          onSelect={this.handleSelect}
-          slide={false}
-          interval={2500}
-        >
-          {this.state.activeSlides.map((item, i) => (
-            <Carousel.Item key={i}>
-              <Row className="g-3">
-                {item.map((element) => (
-                  <Col key={element.imdbID} md={4} lg={2}>
-                    <Card className="h-100 border-0 rounded-0">
-                      <Card.Img
-                        variant=""
-                        src={element.Poster}
-                        alt={element.Title}
-                        height={160}
-                        style={{
-                            objectFit: 'cover',
-                            objectPosition:'top'
-                          }}
-                        className="movieimg rounded-0"
-                      />
-                    </Card>
-                  </Col>
-                ))}
-              </Row>
-            </Carousel.Item>
-          ))}
-        </Carousel>
-      </Container>
-    );
-  }
-}
+  useEffect(() => {
+    getMovies();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.query]);
+
+
+
+  return (
+    <Container className="px-5 mb-4" fluid>
+      <h4>{props.title}</h4>
+      <Carousel
+        activeIndex={index}
+        onSelect={handleSelect}
+        slide={false}
+        interval={2500}
+      >
+        {activeSlides.map((item, i) => (
+          <Carousel.Item key={i}>
+            <Row className="g-3">
+              {item.map((element) => (
+                <Col key={element.imdbID} md={4} lg={2}>
+                  <Card
+                    className="h-100 border-0 rounded-0"
+                    onClick={() => navigate("/MovieDetails/" + element.imdbID)}
+                  >
+                    <Card.Img
+                      variant=""
+                      src={element.Poster}
+                      alt={element.Title}
+                      height={160}
+                      style={{
+                        objectFit: "cover",
+                        objectPosition: "top",
+                      }}
+                      className="movieimg rounded-0"
+                    />
+                  </Card>
+                </Col>
+              ))}
+            </Row>
+          </Carousel.Item>
+        ))}
+      </Carousel>
+    </Container>
+  );
+};
 
 export default MovieCards;
