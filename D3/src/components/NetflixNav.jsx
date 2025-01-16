@@ -15,7 +15,7 @@ const NetflixNav = (props) => {
 
   const submit = (e) => {
     e.preventDefault();
-    console.log(searchInput);
+    //console.log(searchInput);
     props.searchSubmit(searchInput);
   };
 
@@ -60,8 +60,8 @@ const NetflixNav = (props) => {
                 <Nav className="d-lg-flex justify-content-end align-items-center">
                   <Form
                     className="d-flex search-container"
-                    onSubmit={() => {
-                      submit();
+                    onSubmit={(e) => {
+                      submit(e);
                     }}
                   >
                     <Form.Control

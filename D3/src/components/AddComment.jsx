@@ -34,6 +34,10 @@ class AddComment extends Component {
             elementId: this.props.asin,
           },
         })
+        this.props.setUpdate((currentUpdate) => {
+            return currentUpdate + 1
+          })
+
       } else {
         throw new Error('Qualcosa è andato storto')
       }
@@ -47,7 +51,6 @@ class AddComment extends Component {
 
 
       <div className="my-3">
-        {console.log(this.props.asin)}
         <Form onSubmit={this.sendComment}>
           <Form.Group className="mb-2">
             <Form.Label>Recensione</Form.Label>

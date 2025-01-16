@@ -7,6 +7,7 @@ import AddComment from "./AddComment";
 const CommentArea = ()=>{
     const param = useParams();
     const [comment, setComment] = useState([])
+    const [update, setUpdate] = useState(0)
 
     const Strive = async () => {
         const URL = "https://striveschool-api.herokuapp.com/api/comments/";
@@ -21,7 +22,7 @@ const CommentArea = ()=>{
           if (response.ok) {
             const data = await response.json();
             setComment(data);
-            console.log(data);
+            //console.log(data);
           } else {
             throw new Error("errore nel recupero dei dati");
           }
@@ -32,15 +33,15 @@ const CommentArea = ()=>{
 
       useEffect(() => {
         Strive()
-        console.log();
+        //console.log();
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      }, []);
+      }, [update]);
 
     return(<>
     <div className="text-center">
        { /*{this.state.isLoading && <Loading />}
         {this.state.isError && <Error />}*/}
-        <AddComment asin={param.id} />
+        <AddComment asin={param.id} setUpdate={setUpdate}/>
         <CommentList commentsToShow={comment}/>
       </div>
     </>)
